@@ -2,6 +2,26 @@ package MazeGen;
 
 import java.util.*;
 
+/*
+ * MazeGenerator
+ * Responsible for generating a perfect maze using a depth-first recursive
+ * backtracking algorithm.
+ *
+ * Design guarantees:
+ * - The generated maze is fully connected (every cell is reachable).
+ * - The maze contains no cycles (exactly one unique path between any two cells).
+ *
+ * Determinism:
+ * - A seeded Random instance is used so that identical seeds and dimensions
+ *   always produce identical maze layouts.
+ *
+ * Implementation notes:
+ * - Walls are removed symmetrically between adjacent cells to preserve
+ *   maze consistency.
+ * - Start and end locations are selected after generation, favoring dead-end
+ *   cells to increase solution path length.
+ */
+
 public class MazeGenerator {
 
     private final Maze maze;
@@ -41,6 +61,7 @@ public class MazeGenerator {
             if (maze.isInMaze(newRow, newCol) && !visited[newRow][newCol]) {
                 Cell nextCell = maze.getCell(newRow, newCol);
 
+                // Remove the wall in both cells to maintain bidirectional consistency
                 currentCell.removeWall(direction);
                 nextCell.removeWall(getOpposite(direction));
 
@@ -49,6 +70,11 @@ public class MazeGenerator {
         }
     }
 
+    /*
+     * Selects start and end locations after maze generation.
+     * Start is placed on a random outer edge cell; end is chosen from dead ends
+     * far from the start (fallback: farthest reachable cell).
+     */
     public void placeStartAndEndAtDeadEnd() {
         int[] start = getRandomEdgeCell();
         int startRow = start[0];

@@ -8,6 +8,18 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+ * DFS Solver
+ *
+ * Implements a recursive Depth-First Search to find a path through the maze.
+ *
+ * Characteristics:
+ * - Explores paths deeply before backtracking.
+ * - Does not guarantee the shortest path.
+ * - Useful for demonstrating depth-based traversal behavior.
+ *
+ * Records visitedOrder to support UI animation and path exploration visualization.
+ */
 public class DFS {
 
     private final Maze maze;
@@ -22,6 +34,11 @@ public class DFS {
         this.path = new ArrayList<>();
     }
 
+    /**
+     * Runs Depth-First Search from the maze start cell to the maze end cell.
+     *
+     * @return A valid path from start to end if one is found.
+     */
     public List<Cell> solve() {
         long startTime = System.nanoTime();
         path.clear();
@@ -66,7 +83,8 @@ public class DFS {
             }
         }
 
-        path.remove(path.size() - 1); // backtrack
+        // Backtrack when no path is found along this branch
+        path.remove(path.size() - 1);
         return false;
     }
 

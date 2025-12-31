@@ -8,6 +8,19 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+ * Right-Hand Rule Solver
+ *
+ * Implements the wall-following (right-hand) maze solving strategy.
+ *
+ * Characteristics:
+ * - Maintains contact with the right wall while traversing the maze.
+ * - Does not guarantee the shortest path.
+ * - Guaranteed to find an exit in simply connected (perfect) mazes.
+ *
+ * The solver tracks the current facing direction and prioritizes movement
+ * in the order: right, forward, left, then back.
+ */
 public class RightHandSolver {
 
     private Maze maze;
@@ -18,6 +31,13 @@ public class RightHandSolver {
         this.maze = maze;
     }
 
+    /*
+     * Determines the initial facing direction based on the start cell's
+     * position along the maze boundary and its open edge.
+     *
+     * This ensures the solver begins with a consistent orientation so that
+     * the right-hand rule can be applied correctly.
+     */
     private Direction findStartingDirection(Cell startCell) {
         if(!startCell.hasWall(Direction.UP) && startCell.getRow() == 0){
             return Direction.DOWN;
@@ -83,6 +103,11 @@ public class RightHandSolver {
 
     private final List<Direction> facingHistory = new ArrayList<>();
 
+    /**
+     * Solves the maze using the Right-Hand Rule starting from the maze entrance.
+     *
+     * @return A valid path from start to end following the wall on the right.
+     */
     public List<Cell> solve() {
         long startTime = System.nanoTime();
 
@@ -92,6 +117,7 @@ public class RightHandSolver {
         facingHistory.add(facing);
 
         while (current != maze.getEndCell()) {
+            // Movement priority for right-hand rule: right → forward → left → back
             Direction[] priorities = { getRight(facing), facing, getLeft(facing), getBack(facing) };
 
             for (Direction dir : priorities) {

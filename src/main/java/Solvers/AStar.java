@@ -6,6 +6,18 @@ import MazeGen.Maze;
 import java.time.Duration;
 import java.util.*;
 
+/*
+ * AStar Solver
+ *
+ * Implements A* search on the maze graph using a Manhattan-distance heuristic.
+ *
+ * Notes:
+ * - Uses gScore (cost from start) and cameFrom (parent pointers) to reconstruct the final path.
+ * - Records visitedOrder to support UI animation/visualization.
+ * - With an admissible heuristic (Manhattan distance on 4-neighbor grids),
+ *   A* finds an optimal (shortest) path in an unweighted maze.
+ */
+
 public class AStar {
 
     private final Maze maze;
@@ -23,6 +35,12 @@ public class AStar {
         this.cameFrom = new HashMap<>();
         this.path = new ArrayList<>();
     }
+
+    /**
+     * Runs A* search from the maze start cell to the maze end cell.
+     *
+     * @return The solution path from start to end, or an empty list if no path is found.
+     */
 
     public List<Cell> solve(){
         long startTime = System.nanoTime();
@@ -44,6 +62,7 @@ public class AStar {
             visitedOrder.add(currentCell);
 
             if(currentCell.equals(end)){
+                // Goal reached: reconstruct path using cameFrom pointers
                 reconstructPath(currentCell);
                 long endTime = System.nanoTime();
                 timeToSolve = Duration.ofNanos(endTime - startTime);
@@ -66,6 +85,7 @@ public class AStar {
 
                         if (!gScore.containsKey(neighbor) || tentativeG < gScore.get(neighbor)) {
                             gScore.put(neighbor, tentativeG);
+                            // Heuristic: Manhattan distance (valid for 4-direction grid movement)
                             int h = manhattan(neighbor, end);
                             int f = tentativeG + h;
                             cameFrom.put(neighbor, currentCell);
@@ -75,7 +95,7 @@ public class AStar {
                 }
             }
         }
-        long endTime = System.currentTimeMillis();
+        long endTime = System.nanoTime();
         timeToSolve = Duration.ofNanos(endTime - startTime);
         return path; // Empty path if not found
     }

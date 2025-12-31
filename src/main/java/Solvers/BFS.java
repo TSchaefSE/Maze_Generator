@@ -7,6 +7,17 @@ import MazeGen.Maze;
 import java.time.Duration;
 import java.util.*;
 
+/*
+ * BFS Solver
+ *
+ * Implements Breadth-First Search over the maze graph to find a path from start to end.
+ * Because BFS explores in layers on an unweighted grid, it guarantees the shortest path
+ * (fewest steps) when a solution exists.
+ *
+ * Records visitedOrder to support UI animation/visualization and uses parentMap to
+ * reconstruct the final path once the goal is reached.
+ */
+
 public class BFS {
 
     private final Maze maze;
@@ -23,6 +34,11 @@ public class BFS {
         this.path = new ArrayList<>();
     }
 
+    /**
+     * Runs Breadth-First Search from the maze start cell to the maze end cell.
+     *
+     * @return The shortest path from start to end, or an empty list if no path is found.
+     */
     public List<Cell> solve() {
         long startTime = System.nanoTime();
         path.clear();
@@ -41,6 +57,7 @@ public class BFS {
             Cell current = queue.poll();
 
             if (current.equals(endCell)) {
+                // Goal reached: reconstruct shortest path using parent pointers
                 reconstructPath(endCell);
                 long endTime = System.nanoTime();
                 timeToSolve = Duration.ofNanos(endTime - startTime);
